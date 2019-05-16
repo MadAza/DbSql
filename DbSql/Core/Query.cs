@@ -78,9 +78,8 @@ namespace DbSql.Core
                        
                     while(reader.Read())
                     {
-                        T entity = localEntityFactory is null ? default : localEntityFactory();
-                        readerMapper.Map(reader, entity);
-                        entities.Add(entity);
+                        T entity = localEntityFactory is null ? default : localEntityFactory();                     
+                        entities.Add(readerMapper.Map(reader, entity));
                     }
                 }
             }
@@ -111,7 +110,7 @@ namespace DbSql.Core
 
                     entity = localEntityFactory is null ? default : localEntityFactory();
                     reader.Read();
-                    readerMapper.Map(reader, entity);
+                    entity = readerMapper.Map(reader, entity);
                 }
             }
 
@@ -165,7 +164,7 @@ namespace DbSql.Core
                     entity = localEntityFactory is null ? default : localEntityFactory();
 
                     await reader.ReadAsync();
-                    readerMapper.Map(reader, entity);
+                    entity = readerMapper.Map(reader, entity);
                 }
             }
 

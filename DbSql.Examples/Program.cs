@@ -25,6 +25,7 @@ namespace DbSql.Examples
         {
             InsertExample();
             ReadExample();
+            ReadExample2();
 
             Console.ReadLine();
         }
@@ -51,6 +52,15 @@ namespace DbSql.Examples
             {
                 Console.WriteLine($"Name: {user.Name}. Age: {user.Age}");
             }
+        }
+
+        private static void ReadExample2()
+        {
+            DbController dbController = DbControllers.GetController(CONNECTION_STRING_NAME);
+
+            int usersCount = dbController.Query("SELECT COUNT(*) FROM [users]").ReadFirst<int>();
+
+            Console.WriteLine(usersCount);
         }
     }
 }
