@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace DbSql.Core
 {
+    /// <summary>
+    /// Вспомогательный класс, для сопоставления .Net типов с типами Sql
+    /// </summary>
     internal static class SqlTypeMap
     {
         static SqlTypeMap()

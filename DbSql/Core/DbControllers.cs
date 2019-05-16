@@ -8,6 +8,9 @@ using DbSql.Core.Parameters;
 
 namespace DbSql.Core
 {
+    /// <summary>
+    /// Класс для получения объектов <see cref="DbController"/>
+    /// </summary>
     public static class DbControllers
     {
         static DbControllers()
@@ -19,6 +22,11 @@ namespace DbSql.Core
         private static readonly List<DbController> dbControllers;
         private static readonly object locker;
 
+        /// <summary>
+        /// Возвращает объект <see cref="DbController"/> по указанной строке подключения
+        /// </summary>
+        /// <param name="connectionStringName">Название строки подключения</param>
+        /// <returns></returns>
         public static DbController GetController(string connectionStringName)
         {
             lock(locker)

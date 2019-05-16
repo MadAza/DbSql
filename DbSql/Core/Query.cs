@@ -8,6 +8,10 @@ using DbSql.Core.Parameters;
 
 namespace DbSql.Core
 {
+    /// <summary>
+    /// Класс представляющий собой один SQL-запрос. <para/>
+    /// Внимание, каждый объект <see cref="Query"/> может использоваться только один раз
+    /// </summary>
     public class Query : IDisposable
     {
         internal Query(IParameterBuilder parameterBuilder, IReaderMapper readerMapper, DbConnection connection)
@@ -30,19 +34,38 @@ namespace DbSql.Core
         private string text;
         private object parameters;
 
+        /// <summary>
+        /// Устанавливает текст SQL-запроса
+        /// </summary>
+        /// <param name="text">Текст SQL-запроса</param>
+        /// <returns>Возвращается текущий объект</returns>
         public Query Text(string text)
         {
             this.text = text;
             return this;
         }
+
+        /// <summary>
+        /// Задает параметры SQL-запроса
+        /// </summary>
+        /// <param name="parameters">Параметры SQL-запроса</param>
+        /// <returns>Возвращается текущий объект</returns>
         public Query Parameters(object parameters)
         {
             this.parameters = parameters;
             return this;
         }
 
+        /// <summary>
+        /// Выполняет SQL-запрос и возвращает ответ указанного типа в качестве списка<para/>
+        /// Если объект должен вернуть сложный объект, то нужно передать в аргументы делегат создающий этот объект
+        /// </summary>
+        /// <typeparam name="T">Тип результата</typeparam>
+        /// <param name="entityFactory">Делегат создающий объект</param>
+        /// <returns>Список ответов указанного типа/returns>
         public IEnumerable<T> Read<T>(Func<T> entityFactory = null)
         {
+            CheckNotDisposed();
             Func<T> localEntityFactory = entityFactory;
 
             List<T> entities = new List<T>();
@@ -66,8 +89,17 @@ namespace DbSql.Core
             Dispose();
             return entities;
         }
+
+        /// <summary>
+        /// Выполняет SQL-запрос и возвращает ответ первый ответ указанного типа<para/>
+        /// Если объект должен вернуть сложный объект, то нужно передать в аргументы делегат создающий этот объект
+        /// </summary>
+        /// <typeparam name="T">Тип результата</typeparam>
+        /// <param name="entityFactory">Делегат создающий объект</param>
+        /// <returns>Ответ указанного типа</returns>
         public T ReadFirst<T>(Func<T> entityFactory = null)
         {
+            CheckNotDisposed();
             Func<T> localEntityFactory = entityFactory;
 
             T entity;
@@ -88,8 +120,12 @@ namespace DbSql.Core
             return entity;
         }
 
+        /// <summary>
+        /// Асинхронная версия метода <see cref="Read{T}(Func{T})"/>
+        /// </summary>
         public async Task<IEnumerable<T>> ReadAsync<T>(Func<T> entityFactory = null)
         {
+            CheckNotDisposed();
             Func<T> localEntityFactory = entityFactory;
 
             List<T> entities = new List<T>();
@@ -112,8 +148,12 @@ namespace DbSql.Core
             Dispose();
             return entities;
         }
+        /// <summary>
+        /// Асинхронная версия метода <see cref="ReadFirst{T}(Func{T})"/>
+        /// </summary>
         public async Task<T> ReadFirstAsync<T>(Func<T> entityFactory = null)
         {
+            CheckNotDisposed();
             Func<T> localEntityFactory = entityFactory;
 
             T entity;
@@ -135,8 +175,13 @@ namespace DbSql.Core
             return entity;
         }
 
+        /// <summary>
+        /// Выполняет SQL-запрос, не возвращающий ответ
+        /// </summary>
+        /// <returns>Количество затронутых строк</returns>
         public int Execute()
         {
+            CheckNotDisposed();
             using (DbCommand command = CreateCommand())
             {
                 int result = command.ExecuteNonQuery();
@@ -144,8 +189,13 @@ namespace DbSql.Core
                 return result;
             }
         }
+
+        /// <summary>
+        /// Асинхронная версия метода <see cref="Execute"/>
+        /// </summary>
         public async Task<int> ExecuteAsync()
         {
+            CheckNotDisposed();
             using (DbCommand command = CreateCommand())
             {
                 int result  = await command.ExecuteNonQueryAsync();
@@ -175,6 +225,17 @@ namespace DbSql.Core
             return command;
         }
 
+        private void CheckNotDisposed()
+        {
+            if(disposed)
+            {
+                throw new ObjectDisposedException(nameof(connection));
+            }
+        }
+
+        /// <summary>
+        /// Закрывает соединение с базой данных
+        /// </summary>
         public void Dispose()
         {
             lock(locker)
