@@ -14,12 +14,12 @@ DbController controller = DbControllers.GetController("yourConnectionStringName"
 
 ### Чтение данных
 
-Создадим класс для представление сущности в базе данных.
+Создадим класс для представления сущности в базе данных.
 
 ```cs
 class User
 {
-  [SqlColumn(""id)]
+  [SqlColumn("id")]
   public Guid Id { get; set; }
 
   [SqColumn("name")]
