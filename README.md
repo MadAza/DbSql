@@ -20,12 +20,15 @@ DbController controller = DbControllers.GetController("yourConnectionStringName"
 class User
 {
   [SqlColumn("id")]
+  [SqlParameter("id")]
   public Guid Id { get; set; }
 
   [SqColumn("name")]
+  [SqlParameter("name")]
   public string Name { get; set; }
   
   [SqlColumn("age")]
+  [SqlParameter("age")]
   public int Age { get; set; }
 }
 ```
