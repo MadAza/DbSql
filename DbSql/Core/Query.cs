@@ -74,7 +74,7 @@ namespace DbSql.Core
             {               
                 using (DbDataReader reader = command.ExecuteReader())
                 {
-                    if (!reader.HasRows) return entities;
+                    if (!reader.HasRows) break;
                        
                     while(reader.Read())
                     {
@@ -106,7 +106,10 @@ namespace DbSql.Core
             {
                 using (DbDataReader reader = command.ExecuteReader())
                 {
-                    if (!reader.HasRows) return default;
+                    if (!reader.HasRows)  {
+                        entity = default;
+                        break;
+                    }
 
                     entity = localEntityFactory is null ? default : localEntityFactory();
                     reader.Read();
@@ -132,7 +135,7 @@ namespace DbSql.Core
             {
                 using (DbDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    if (!reader.HasRows) return entities;
+                    if (!reader.HasRows) break;
           
                     while (await reader.ReadAsync())
                     {
@@ -159,7 +162,10 @@ namespace DbSql.Core
             {
                 using (DbDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    if (!reader.HasRows) return default;
+                    if (!reader.HasRows) {
+                        entity = default;
+                        break;   
+                    }
 
                     entity = localEntityFactory is null ? default : localEntityFactory();
 
